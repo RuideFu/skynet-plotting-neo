@@ -142,8 +142,21 @@
       </div>
     </div>
     <div class="col-6">
-      <div class="tile-container center-vertical">
-        <h1>Tools for MWU! is on the way!</h1>
+      <div [routerLink]="'/radiosearch'" class="tile-container">
+        <mat-card class="tile">
+          <mat-card-header>
+            <mat-card-title>Radio Search</mat-card-title>
+            <mat-card-subtitle>MWU!</mat-card-subtitle>
+          </mat-card-header>
+          <div class="chart-preview">
+            <app-radiosearch-highchart></app-radiosearch-highchart>
+          </div>
+          <mat-card-content>
+            <p>
+              Description for the Radio Search tool goes here.
+            </p>
+          </mat-card-content>
+        </mat-card>
       </div>
     </div>
   </div>

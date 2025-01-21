@@ -1,0 +1,11 @@
+.chart-container {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+}
+
+::ng-deep .highcharts-series-2 path.highcharts-graph {
+  stroke-dasharray: 5, 5; /* Dash pattern: 5 units line, 5 units gap */
+  stroke: #5dbc5d;       /* Ensure the line color matches */
+  stroke-width: 1;       /* Ensure this matches your chart options */
+}

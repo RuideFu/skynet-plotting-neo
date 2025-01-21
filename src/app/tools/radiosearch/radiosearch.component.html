@@ -1,0 +1,87 @@
+<div class="page-container">
+  <!-- Left container wrapper -->
+  <div class="left-container-wrapper" #fileDropZone 
+  (dragover)="onDragOver($event)"
+  (dragenter)="onDragEnter()"
+  (dragleave)="onDragLeave()"
+  (drop)="onFileDrop($event)">
+    <!-- Upload Container -->
+    <div class="left-container" *ngIf="!fitsLoaded">
+      <div class="prompt-container">
+        <div class="row drop-zone" clusterDragNDrop>
+          <div (click)="fileInput.click()" class="click-zone">
+            <h3 class="big-title">Drop to Upload</h3>
+            <mat-icon class="big-icon">upload</mat-icon>
+            <h6>or</h6>
+            <h4>Click to Browse</h4>
+          </div>
+        </div>
+      </div>
+      <input #fileInput (change)="onFileSelected($event)" style="display: none" type="file">
+    </div>
+
+    <!-- Canvas Container with Coordinates and Download Button -->
+    <div class="left-container">
+      <canvas #fitsCanvas [ngStyle]="{'opacity': ra ? 1 : 0}" id="fitsCanvas"></canvas>
+
+      <div class="ra-slider-container" [ngStyle]="{'opacity': ra ? 1 : 0}">
+        <label for="xOffset">
+          {{ rccords === 'equatorial' ? 'RA Offset (degrees)' : 'GalLong Offset (degrees)' }}: {{ sliderXOffset }}
+        </label>
+        <input id="xOffset" type="range" 
+               min="-3" max="3" step="0.1" [(ngModel)]="sliderXOffset" 
+               (input)="redrawCircles()">
+      </div>
+      
+      <div class="dec-slider-container" [ngStyle]="{'opacity': ra ? 1 : 0}">
+        <label for="yOffset">
+          {{ rccords === 'equatorial' ? 'Dec Offset (degrees)' : 'GalLat Offset (degrees)' }}: {{ sliderYOffset }}
+        </label>
+        <input id="yOffset" type="range" 
+               min="-3" max="3" step="0.1" [(ngModel)]="sliderYOffset" 
+               (input)="redrawCircles()"
+               style="direction: rtl; transform: scaleX(-1);">
+      </div>
+      
+      <div class="max-slider-container" [ngStyle]="{'opacity': ra ? 1 : 0}">
+        <label for="maxValue">Scale: {{ 200 * maxValue | number:'1.0-0' }}%</label>
+        <input id="maxValue" type="range" min="0" max="1" step="0.05" [(ngModel)]="maxValue" (input)="updateFitsImage()">
+      </div>
+
+      <div class="zoom-slider-container" [ngStyle]="{'opacity': ra ? 1 : 0}">
+        <label for="zoom">Zoom: {{ zoomLevel | number:'1.0-0' }}%</label>
+        <input id="zoom" type="range" min="10" max="100" [(ngModel)]="zoomLevel" (input)="updateZoom()">
+      </div>
+
+      <!-- Coordinates Display -->
+      <div class="coordinates" [ngStyle]="{'opacity': ra ? 1 : 0}">
+        <span *ngIf="currentCoordinates && rccords" [innerHTML]="convertCoordinates(currentCoordinates.ra, currentCoordinates.dec, rccords)">
+        </span>
+      </div>
+      
+
+      <!-- Download Button Display -->
+      <div class="download-button-container" [ngStyle]="{'opacity': ra ? 1 : 0}">
+        <button (click)="downloadCanvas()">Download Canvas</button>
+      </div>
+
+      <div class="delete-button-container" [ngStyle]="{'opacity': ra ? 1 : 0}">
+        <button (click)="deleteFITS()">Delete Image</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right container for highchart -->
+  <div class="right-container">
+    <app-radiosearch-highchart></app-radiosearch-highchart>
+    <p class="below-text" *ngIf="selectedSource$ | async as selectedSource">
+      <ng-container *ngIf="averageFlux$ | async as averageFlux; else noFlux">
+        The uploaded file used a frequency of {{ lowerFreq || 'N/A' }} Hz to {{ upperFreq || 'N/A' }} Hz. The expected flux for radio source
+        {{ selectedSource || 'Unknown Source' }} at this frequency range is {{ averageFlux }} Jys.
+      </ng-container>
+      <ng-template #noFlux>
+        There is not enough data to guess the flux at the appropriate frequency!
+      </ng-template>
+    </p>
+  </div>
+</div>

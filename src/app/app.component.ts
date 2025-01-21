@@ -1,5 +1,6 @@
 import {Component, HostListener} from '@angular/core';
 import {AppearanceService} from "./shared/settings/appearance/service/appearance.service";
+import { Router } from '@angular/router';
 
 /**
  * App Component
@@ -15,13 +16,17 @@ export class AppComponent {
    */
   title = 'Astromancer by Skynet';
 
-  constructor(private appearanceService: AppearanceService) {
+  constructor(private appearanceService: AppearanceService, private router: Router) {
     this.appearanceService.intialize();
   }
-
+  
   @HostListener('window:resize', ['$event'])
   onResize() {
-    location.reload();
-  }
+    // Specify the URL or route you want to exclude from reload
+    const excludedRoute = '/radiosearch';
 
+    if (this.router.url !== excludedRoute) {
+      location.reload();
+    }
+  }
 }
